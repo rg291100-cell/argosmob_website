@@ -12,19 +12,20 @@ const contactInfo = [
   {
     icon: MapPin,
     label: "Location",
-    value: "Greater Noida, Uttar Pradesh, India — 201308",
+    value: "618, Hope Tower, Galaxy Blue Sapphire Plaza, Greater Noida, Uttar Pradesh — 201018",
+    href: "https://maps.app.goo.gl/6gU1nVvJSqY8ji4m6",
   },
   {
     icon: Mail,
     label: "Email",
-    value: "hello@argosmob.com",
-    href: "mailto:hello@argosmob.com",
+    value: "hello@argosmob.onmicrosoft.com",
+    href: "mailto:hello@argosmob.onmicrosoft.com",
   },
   {
     icon: Phone,
     label: "Phone",
-    value: "+91 99999 99999",
-    href: "tel:+919999999999",
+    value: "+917042603342",
+    href: "tel:+917042603342",
   },
   {
     icon: Clock,
@@ -38,9 +39,21 @@ export default function ContactPage() {
     <>
       {/* Hero */}
       <section className="relative pt-32 pb-20 bg-slate-950 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950" />
-        <div className="absolute inset-0 grid-pattern opacity-30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-blue-600/8 blur-3xl" />
+        {/* Cinematic AI Image Background with Slow Parallax/Pan */}
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: "url('/images/ai-renders/app-dev.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            mixBlendMode: "screen",
+            opacity: 0.1,
+          }}
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/90 to-slate-950 z-0" />
+        <div className="absolute inset-0 grid-pattern opacity-30 z-0" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-blue-600/10 blur-3xl z-0" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeIn>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-900/50 border border-blue-800 text-blue-300 text-xs font-semibold uppercase tracking-widest mb-6">
@@ -100,7 +113,7 @@ export default function ContactPage() {
 
               <FadeIn direction="right" delay={0.2}>
                 <a
-                  href="https://wa.me/919999999999"
+                  href="https://wa.me/917042603342"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-4 p-5 rounded-xl bg-green-50 border border-green-200 hover:border-green-300 hover:bg-green-100 transition-all group"
@@ -154,14 +167,14 @@ export default function ContactPage() {
           <FadeIn>
             <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style={{ height: "360px" }}>
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.83923192776!2d77.06889754725782!3d28.52758200617607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5a43173357b%3A0x37ffce30c87cc03f!2sGreater%20Noida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1713000000000!5m2!1sen!2sin"
+                src="https://maps.google.com/maps?q=618,%20Hope%20Tower,%20Galaxy%20Blue%20Sapphire%20Plaza,%20Greater%20Noida,%20Uttar%20Pradesh%2C%20201018&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="360"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="ArgosMob office location — Greater Noida"
+                title="ArgosMob office location — Hope Tower, Greater Noida"
               />
             </div>
           </FadeIn>

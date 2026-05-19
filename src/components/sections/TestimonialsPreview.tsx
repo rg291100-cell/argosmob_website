@@ -1,73 +1,230 @@
-import Link from "next/link";
-import { ArrowRight, Quote } from "lucide-react";
-import FadeIn, { StaggerContainer, StaggerItem } from "@/components/animations/FadeIn";
-import SectionHeader from "@/components/ui/SectionHeader";
+"use client";
 
-const testimonials = [
-  {
-    quote: "ArgosMob completely transformed how we operate. The AI automation they built reduced our manual workload by 70%. Their team is exceptional — they think like product owners, not just developers.",
-    author: "Rahul Sharma",
-    role: "CEO, FreshCart India",
-    rating: 5,
-  },
-  {
-    quote: "We came to them with a complex SaaS idea and they delivered something beyond what we imagined. The attention to detail, the quality of code, and the design — everything was world-class.",
-    author: "Priya Mehta",
-    role: "Founder, NexCRM",
-    rating: 5,
-  },
-  {
-    quote: "After working with 3 agencies before ArgosMob, I can confidently say — there's a difference between people who write code and people who build products. ArgosMob builds products.",
-    author: "Vikram Nair",
-    role: "CTO, MediBook Technologies",
-    rating: 5,
-  },
-];
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { ArrowRight, Quote, Star, ChevronLeft, ChevronRight } from "lucide-react";
+
+type Testimonial = {
+  id: string;
+  client_name: string;
+  designation: string;
+  company: string;
+  content: string;
+  rating: number;
+  image_url: string;
+  initials: string;
+  color: string;
+};
 
 export default function TestimonialsPreview() {
-  return (
-    <section className="section-padding bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-14">
-            <SectionHeader
-              eyebrow="Client Stories"
-              title="What Our Clients Say"
-              align="left"
-            />
-            <Link
-              href="/testimonials"
-              className="flex-shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              Read all stories <ArrowRight size={15} />
-            </Link>
-          </div>
-        </FadeIn>
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [dir, setDir] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6" staggerDelay={0.1}>
-          {testimonials.map((t) => (
-            <StaggerItem key={t.author}>
-              <div className="relative group bg-slate-50 hover:bg-white rounded-2xl p-7 border border-slate-200 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 h-full flex flex-col">
-                <Quote size={24} className="text-blue-200 mb-5 flex-shrink-0" />
-                <p className="text-slate-600 text-sm leading-relaxed flex-1 italic">&ldquo;{t.quote}&rdquo;</p>
-                <div className="mt-6 pt-5 border-t border-slate-200 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                    {t.author.charAt(0)}
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/testimonials");
+        const data = await res.json();
+        const colors = ["#2563eb", "#6366f1", "#8b5cf6", "#ec4899", "#f59e0b"];
+        const formatted = data.map((t: any, i: number) => ({
+          ...t,
+          initials: t.client_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2),
+          color: colors[i % colors.length]
+        }));
+        setTestimonials(formatted);
+      } catch (error) {
+        console.error("Error fetching testimonials:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  useEffect(() => {
+    if (testimonials.length > 0) {
+      const t = setInterval(() => { 
+        setDir(1); 
+        setCurrent((c) => (c + 1) % testimonials.length); 
+      }, 5500);
+      return () => clearInterval(t);
+    }
+  }, [testimonials]);
+
+  if (loading) return (
+    <div className="section-padding flex justify-center items-center h-64">
+      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+
+  if (testimonials.length === 0) return null;
+
+  const go = (next: number) => {
+    setDir(next > current ? 1 : -1);
+    setCurrent(next);
+  };
+
+  const t = testimonials[current];
+
+  return (
+    <section
+      className="section-padding relative overflow-hidden"
+      style={{ background: "linear-gradient(180deg, #ffffff 0%, #f8faff 100%)" }}
+    >
+      {/* Background accent */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(37,99,235,0.03) 0%, transparent 70%)" }}
+      />
+
+      <div className="container-xl">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14"
+        >
+          <div>
+            <div className="eyebrow-light mb-4">Client Stories</div>
+            <h2 className="text-section-title font-display text-slate-900">
+              What Our Clients{" "}
+              <span className="gradient-text">Say</span>
+            </h2>
+          </div>
+          <Link
+            href="/testimonials"
+            className="flex-shrink-0 inline-flex items-center gap-2 text-[13.5px] font-semibold text-blue-600 hover:text-blue-700 transition-colors group"
+          >
+            Read all stories
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </motion.div>
+
+        {/* Featured testimonial */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Large feature card */}
+          <div
+            className="lg:col-span-2 relative rounded-2xl p-8 md:p-10 overflow-hidden border"
+            style={{
+              background: `linear-gradient(135deg, ${t.color}08 0%, rgba(255,255,255,0.9) 100%)`,
+              borderColor: `${t.color}20`,
+              boxShadow: `0 8px 40px ${t.color}10`,
+            }}
+          >
+            {/* Large quote mark */}
+            <div
+              className="absolute top-6 right-8 text-[120px] font-bold leading-none opacity-[0.05] select-none font-display"
+              style={{ color: t.color }}
+            >
+              &ldquo;
+            </div>
+
+            <AnimatePresence mode="wait" custom={dir}>
+              <motion.div
+                key={current}
+                custom={dir}
+                initial={{ opacity: 0, x: dir * 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: dir * -30 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {/* Stars */}
+                <div className="flex gap-1 mb-6">
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} size={14} fill={t.color} color={t.color} />
+                  ))}
+                </div>
+
+                <p className="text-[1.0625rem] text-slate-700 leading-[1.8] mb-8 italic">
+                  &ldquo;{t.content}&rdquo;
+                </p>
+
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-white font-bold text-[16px] flex-shrink-0 overflow-hidden border-2 border-white"
+                    style={{ background: `linear-gradient(135deg, ${t.color}, ${t.color}cc)`, boxShadow: `0 4px 16px ${t.color}40` }}
+                  >
+                    {t.image_url ? <img src={t.image_url} alt={t.client_name} className="w-full h-full object-cover" /> : t.initials}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 text-sm">{t.author}</p>
-                    <p className="text-xs text-slate-500">{t.role}</p>
-                  </div>
-                  <div className="ml-auto flex gap-0.5">
-                    {Array.from({ length: t.rating }).map((_, i) => (
-                      <span key={i} className="text-amber-400 text-xs">★</span>
-                    ))}
+                    <p className="font-semibold text-slate-900">{t.client_name}</p>
+                    <p className="text-[13px] text-slate-500">{t.designation} {t.company && `@ ${t.company}`}</p>
                   </div>
                 </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation */}
+            <div className="flex items-center gap-3 mt-8">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => go(i)}
+                  className="transition-all duration-300"
+                  style={{
+                    width: i === current ? 24 : 8,
+                    height: 8,
+                    borderRadius: 4,
+                    background: i === current ? t.color : "#e2e8f0",
+                  }}
+                />
+              ))}
+              <div className="ml-auto flex gap-2">
+                <button
+                  onClick={() => go((current - 1 + testimonials.length) % testimonials.length)}
+                  className="w-9 h-9 rounded-full border flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all"
+                  style={{ borderColor: "rgba(226,232,240,0.8)" }}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  onClick={() => go((current + 1) % testimonials.length)}
+                  className="w-9 h-9 rounded-full border flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all"
+                  style={{ borderColor: "rgba(226,232,240,0.8)" }}
+                >
+                  <ChevronRight size={16} />
+                </button>
               </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+            </div>
+          </div>
+
+          {/* Sidebar — other testimonials */}
+          <div className="flex flex-col gap-4">
+            {testimonials.map((tm, i) => (
+              <motion.button
+                key={tm.id}
+                onClick={() => go(i)}
+                whileHover={{ x: 4 }}
+                className="text-left rounded-xl p-5 border transition-all duration-250"
+                style={{
+                  background: i === current ? `${tm.color}06` : "rgba(255,255,255,0.8)",
+                  borderColor: i === current ? `${tm.color}25` : "rgba(226,232,240,0.7)",
+                  boxShadow: i === current ? `0 4px 20px ${tm.color}10` : "none",
+                }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-[12px] flex-shrink-0 overflow-hidden border border-white shadow-sm"
+                    style={{ background: `linear-gradient(135deg, ${tm.color}, ${tm.color}bb)` }}
+                  >
+                    {tm.image_url ? <img src={tm.image_url} alt={tm.client_name} className="w-full h-full object-cover" /> : tm.initials}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 text-[13px]">{tm.client_name}</p>
+                    <p className="text-[11px] text-slate-500 line-clamp-1">{tm.designation} {tm.company && `@ ${tm.company}`}</p>
+                  </div>
+                </div>
+                <p className="text-[12px] text-slate-500 line-clamp-2 italic">&ldquo;{tm.content}&rdquo;</p>
+              </motion.button>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

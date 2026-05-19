@@ -1,105 +1,51 @@
-import type { Metadata } from "next";
-import { ExternalLink, ArrowRight } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { ExternalLink, ArrowRight, Loader2, Filter } from "lucide-react";
 import Link from "next/link";
 import FadeIn, { StaggerContainer, StaggerItem } from "@/components/animations/FadeIn";
-import SectionHeader from "@/components/ui/SectionHeader";
 import CtaSection from "@/components/sections/CtaSection";
-
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Explore ArgosMob's portfolio of premium mobile apps, SaaS platforms, AI systems, and web applications.",
-};
-
-const projects = [
-  {
-    title: "FreshCart",
-    subtitle: "Grocery Delivery Platform",
-    category: "Mobile App",
-    description: "A full-stack React Native grocery delivery platform with real-time order tracking, slot-based scheduling, and AI-powered product discovery for 200K+ users.",
-    tags: ["React Native", "Node.js", "Firebase", "OpenAI", "Google Maps"],
-    gradient: "from-emerald-600 to-teal-700",
-    metrics: [
-      { label: "Downloads", value: "200K+" },
-      { label: "Avg. Rating", value: "4.8★" },
-      { label: "Uptime", value: "99.9%" },
-    ],
-    features: ["Real-time tracking", "AI recommendations", "Slot-based delivery", "Multi-vendor support"],
-  },
-  {
-    title: "NexCRM",
-    subtitle: "AI Sales Intelligence Dashboard",
-    category: "SaaS Platform",
-    description: "An intelligent CRM with GPT-4 powered lead scoring, automated email sequences, predictive churn analysis, and revenue forecasting for B2B SaaS companies.",
-    tags: ["Next.js", "PostgreSQL", "OpenAI GPT-4", "AWS", "Stripe"],
-    gradient: "from-blue-600 to-indigo-700",
-    metrics: [
-      { label: "ARR", value: "₹1.2Cr" },
-      { label: "Users", value: "500+" },
-      { label: "Leads Scored", value: "50K+" },
-    ],
-    features: ["AI lead scoring", "Email automation", "Revenue forecasting", "Pipeline analytics"],
-  },
-  {
-    title: "MediBook",
-    subtitle: "Healthcare Appointment Platform",
-    category: "Healthcare App",
-    description: "HIPAA-compliant telemedicine and appointment booking platform integrating with EMR systems, serving 40+ hospitals with HD video consultation and digital prescriptions.",
-    tags: ["React Native", "Supabase", "WebRTC", "Node.js", "Twilio"],
-    gradient: "from-violet-600 to-purple-700",
-    metrics: [
-      { label: "Hospitals", value: "40+" },
-      { label: "Daily Bookings", value: "2K+" },
-      { label: "Satisfaction", value: "96%" },
-    ],
-    features: ["HD Video consultation", "EMR integration", "Digital prescriptions", "Insurance handling"],
-  },
-  {
-    title: "TablePOS",
-    subtitle: "Restaurant Management SaaS",
-    category: "SaaS Platform",
-    description: "An end-to-end restaurant management SaaS with table management, kitchen display systems, inventory tracking, and multi-outlet analytics for restaurant chains.",
-    tags: ["Next.js", "React Native", "PostgreSQL", "Stripe", "WebSocket"],
-    gradient: "from-orange-600 to-amber-700",
-    metrics: [
-      { label: "Restaurants", value: "150+" },
-      { label: "Orders/Day", value: "15K+" },
-      { label: "Revenue Tracked", value: "₹5Cr+" },
-    ],
-    features: ["Table management", "Kitchen display", "Inventory tracking", "Multi-outlet analytics"],
-  },
-  {
-    title: "ShopFlow",
-    subtitle: "E-Commerce Platform",
-    category: "Web Platform",
-    description: "A high-performance headless e-commerce platform with AI-powered personalization, dynamic pricing, and a multi-vendor marketplace supporting 500+ sellers.",
-    tags: ["Next.js", "Sanity CMS", "Stripe", "PostgreSQL", "Redis"],
-    gradient: "from-pink-600 to-rose-700",
-    metrics: [
-      { label: "Sellers", value: "500+" },
-      { label: "Monthly GMV", value: "₹2Cr+" },
-      { label: "Conv. Rate", value: "4.2%" },
-    ],
-    features: ["Headless architecture", "AI personalization", "Dynamic pricing", "Multi-vendor marketplace"],
-  },
-  {
-    title: "ArcBot",
-    subtitle: "AI Customer Support Chatbot",
-    category: "AI System",
-    description: "An enterprise-grade AI chatbot built on Claude + LangChain with RAG capabilities, handling 80% of customer queries automatically with context-aware responses.",
-    tags: ["Claude AI", "LangChain", "Pinecone", "Next.js", "Python"],
-    gradient: "from-slate-600 to-slate-800",
-    metrics: [
-      { label: "Queries Automated", value: "80%" },
-      { label: "Response Time", value: "<2s" },
-      { label: "CSAT Score", value: "4.6★" },
-    ],
-    features: ["Context-aware responses", "Knowledge base RAG", "Multi-language support", "Handoff to human"],
-  },
-];
+import { cn } from "@/lib/utils";
 
 const categories = ["All", "Mobile App", "SaaS Platform", "Web Platform", "AI System", "Healthcare App"];
 
 export default function PortfolioPage() {
+  const [projects, setProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/projects");
+        if (res.ok) {
+          const data = await res.json();
+          setProjects(data);
+          setFilteredProjects(data);
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    if (activeCategory === "All") {
+      setFilteredProjects(projects);
+    } else {
+      setFilteredProjects(projects.filter((p: any) => p.category === activeCategory));
+    }
+  }, [activeCategory, projects]);
+  
+  const getExternalUrl = (url: string) => {
+    if (!url) return "#";
+    return url.startsWith('http') ? url : `https://${url}`;
+  };
+
   return (
     <>
       {/* Hero */}
@@ -124,99 +70,145 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      {/* Category Filter (visual only) */}
-      <section className="bg-white border-b border-slate-100 py-5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-3 overflow-x-auto pb-1 no-scrollbar">
-          {categories.map((cat, i) => (
-            <button
-              key={cat}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                i === 0
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+      {/* Filter Bar */}
+      <section className="sticky top-[68px] z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100 py-4 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+            <div className="flex items-center gap-2 text-slate-400 mr-2 border-r border-slate-100 pr-4">
+              <Filter size={14} />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Filter</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={cn(
+                    "px-4 py-1.5 rounded-full text-[13px] font-semibold whitespace-nowrap transition-all duration-300",
+                    activeCategory === cat 
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-600/20" 
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Projects Grid */}
-      <section className="section-padding bg-white">
+      <section className="section-padding bg-slate-50/50 min-h-[600px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-8" staggerDelay={0.1}>
-            {projects.map((project) => (
-              <StaggerItem key={project.title}>
-                <div className="group rounded-2xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:shadow-slate-100 hover:border-slate-300 transition-all duration-400 flex flex-col h-full">
-                  {/* Top gradient */}
-                  <div className={`relative h-52 bg-gradient-to-br ${project.gradient} p-7 overflow-hidden`}>
-                    <div className="absolute inset-0 grid-pattern opacity-20" />
-                    <div className="relative z-10 flex items-start justify-between">
-                      <div>
-                        <span className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold mb-3">
-                          {project.category}
-                        </span>
-                        <h3 className="text-2xl font-bold text-white">{project.title}</h3>
-                        <p className="text-white/70 text-sm mt-1">{project.subtitle}</p>
-                      </div>
-                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ExternalLink size={16} className="text-white" />
-                      </div>
-                    </div>
-                    {/* Metrics */}
-                    <div className="absolute bottom-5 left-7 right-7 flex gap-4">
-                      {project.metrics.map((m) => (
-                        <div key={m.label}>
-                          <p className="text-white font-bold text-sm">{m.value}</p>
-                          <p className="text-white/60 text-[10px]">{m.label}</p>
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-40 gap-4">
+              <div className="relative w-12 h-12">
+                <div className="absolute inset-0 rounded-full border-2 border-blue-100" />
+                <div className="absolute inset-0 rounded-full border-t-2 border-blue-600 animate-spin" />
+              </div>
+              <p className="text-slate-400 text-sm font-medium">Fetching portfolio...</p>
+            </div>
+          ) : filteredProjects.length === 0 ? (
+            <div className="text-center py-40 bg-white rounded-3xl border border-slate-200 border-dashed">
+               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                 <Filter className="text-slate-300" size={24} />
+               </div>
+               <p className="text-slate-900 font-bold mb-1">No projects found</p>
+               <p className="text-slate-500 text-sm">We couldn&apos;t find any projects matching your criteria.</p>
+               <button 
+                 onClick={() => setActiveCategory("All")}
+                 className="mt-6 text-blue-600 text-sm font-bold hover:underline"
+                >
+                  Clear all filters
+               </button>
+            </div>
+          ) : (
+            <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12" staggerDelay={0.1}>
+              {filteredProjects.map((project: any, idx: number) => {
+                const year = project.completion_date ? new Date(project.completion_date).getFullYear() : "2026";
+                return (
+                  <StaggerItem key={project.id}>
+                    <div className="group bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-3xl hover:shadow-slate-200/50 transition-all duration-500 flex flex-col h-full">
+                      {/* Image Area */}
+                      <div className="relative h-[300px] sm:h-[400px] overflow-hidden">
+                        <img 
+                          src={project.thumbnail} 
+                          alt={project.title} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+                        
+                        {/* Tags over image */}
+                        <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+                          <span className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg">
+                            {project.category}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Content */}
-                  <div className="p-7 flex flex-col flex-1">
-                    <p className="text-slate-600 text-sm leading-relaxed mb-5">{project.description}</p>
-                    <div className="grid grid-cols-2 gap-2 mb-5">
-                      {project.features.map((f) => (
-                        <div key={f} className="flex items-center gap-2 text-xs text-slate-500">
-                          <div className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
-                          {f}
+
+                        <div className="absolute bottom-8 left-8 right-8 text-white">
+                          <h3 className="text-3xl font-bold mb-2 group-hover:translate-x-2 transition-transform duration-500">{project.title}</h3>
+                          <p className="text-white/80 text-sm line-clamp-1 max-w-md">{project.short_description}</p>
                         </div>
-                      ))}
+                        
+                          {project.live_url && (
+                            <Link 
+                              href={getExternalUrl(project.live_url)}
+                              target="_blank"
+                              className="absolute top-6 right-6 w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-blue-600"
+                            >
+                              <ExternalLink size={20} />
+                            </Link>
+                          )}
+                      </div>
+
+                      {/* Info Area */}
+                      <div className="p-8 flex flex-col flex-1">
+                        <div className="grid grid-cols-2 gap-4 mb-8 border-b border-slate-100 pb-6">
+                           <div>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</p>
+                              <p className="text-slate-900 font-bold">Live</p>
+                           </div>
+                           <div>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Year</p>
+                              <p className="text-slate-900 font-bold">{year}</p>
+                           </div>
+                        </div>
+
+                        <p className="text-slate-600 leading-relaxed mb-8 text-sm line-clamp-3">
+                          {project.full_description}
+                        </p>
+
+                        <div className="mt-auto">
+                          <div className="flex flex-wrap gap-2 mb-8">
+                            {project.tech_stack?.map((tech: string) => (
+                              <span key={tech} className="px-3 py-1.5 bg-slate-50 text-slate-600 rounded-xl text-[11px] font-bold border border-slate-100">
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+
+                          {project.live_url && (
+                            <Link 
+                              href={getExternalUrl(project.live_url)}
+                              target="_blank"
+                              className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:gap-4 transition-all duration-300"
+                            >
+                              Visit Project <ArrowRight size={16} />
+                            </Link>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 mt-auto pt-5 border-t border-slate-100">
-                      {project.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-medium">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
+                  </StaggerItem>
+                );
+              })}
+            </StaggerContainer>
+          )}
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="py-16 bg-slate-50">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <FadeIn>
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Ready to Build Something Great?</h2>
-            <p className="text-slate-500 mb-8">
-              Your project could be the next case study here. Let&apos;s discuss what you&apos;re building.
-            </p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 px-7 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-100"
-            >
-              Start Your Project <ArrowRight size={17} />
-            </Link>
-          </FadeIn>
-        </div>
-      </section>
+      <CtaSection />
     </>
   );
 }

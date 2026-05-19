@@ -10,30 +10,28 @@ interface FadeInProps {
   direction?: "up" | "down" | "left" | "right" | "none";
   className?: string;
   once?: boolean;
+  distance?: number;
 }
 
 export default function FadeIn({
   children,
   delay = 0,
-  duration = 0.6,
+  duration = 0.65,
   direction = "up",
   className,
   once = true,
+  distance = 28,
 }: FadeInProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once, margin: "-60px" });
+  const isInView = useInView(ref, { once, margin: "-50px" });
 
   const variants = {
     hidden: {
       opacity: 0,
-      y: direction === "up" ? 24 : direction === "down" ? -24 : 0,
-      x: direction === "left" ? 24 : direction === "right" ? -24 : 0,
+      y: direction === "up" ? distance : direction === "down" ? -distance : 0,
+      x: direction === "left" ? distance : direction === "right" ? -distance : 0,
     },
-    visible: {
-      opacity: 1,
-      y: 0,
-      x: 0,
-    },
+    visible: { opacity: 1, y: 0, x: 0 },
   };
 
   return (
@@ -42,11 +40,7 @@ export default function FadeIn({
       variants={variants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      transition={{
-        duration,
-        delay,
-        ease: [0.16, 1, 0.3, 1],
-      }}
+      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -57,24 +51,21 @@ export default function FadeIn({
 export function StaggerContainer({
   children,
   className,
-  staggerDelay = 0.1,
+  staggerDelay = 0.08,
 }: {
   children: React.ReactNode;
   className?: string;
   staggerDelay?: number;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
     <motion.div
       ref={ref}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      variants={{
-        hidden: {},
-        visible: { transition: { staggerChildren: staggerDelay } },
-      }}
+      variants={{ hidden: {}, visible: { transition: { staggerChildren: staggerDelay } } }}
       className={className}
     >
       {children}
@@ -92,8 +83,8 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+        hidden: { opacity: 0, y: 24 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
       }}
       className={className}
     >

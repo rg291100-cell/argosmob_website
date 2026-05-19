@@ -76,9 +76,28 @@ export default function ContactForm() {
     e.preventDefault();
     if (!validate()) return;
     setStatus("loading");
-    // Simulate API call — replace with real endpoint
-    await new Promise((r) => setTimeout(r, 1800));
-    setStatus("success");
+    
+    try {
+      const res = await fetch("http://localhost:5000/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: form.name,
+          email: form.email,
+          company: form.company,
+          phone: form.phone,
+          budget: form.budget,
+          projectType: form.service,
+          message: form.description
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to submit");
+      setStatus("success");
+    } catch (error) {
+      console.error(error);
+      setStatus("error");
+    }
   };
 
   if (status === "success") {

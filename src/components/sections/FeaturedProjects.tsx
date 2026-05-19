@@ -1,95 +1,142 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
-import FadeIn from "@/components/animations/FadeIn";
-import SectionHeader from "@/components/ui/SectionHeader";
+import { useEffect, useState } from "react";
+import InteractiveTile from "@/components/ui/InteractiveTile";
 
-const projects = [
-  {
-    title: "FreshCart — Grocery Delivery App",
-    category: "Mobile App",
-    description: "A full-stack React Native grocery delivery app with real-time tracking, slot-based delivery, and AI-powered product recommendations.",
-    tags: ["React Native", "Node.js", "Firebase", "AI"],
-    color: "from-emerald-600 to-teal-700",
-    metric: "200K+ downloads",
-  },
-  {
-    title: "NexCRM — AI Sales Dashboard",
-    category: "SaaS Platform",
-    description: "An intelligent CRM with GPT-powered lead scoring, automated follow-ups, and predictive revenue forecasting for B2B sales teams.",
-    tags: ["Next.js", "PostgreSQL", "OpenAI", "AWS"],
-    color: "from-blue-600 to-indigo-700",
-    metric: "₹1.2Cr ARR",
-  },
-  {
-    title: "MediBook — Healthcare Booking",
-    category: "Healthcare App",
-    description: "HIPAA-compliant telemedicine and appointment booking platform serving 40+ hospitals with integrated EMR and video consultation.",
-    tags: ["React Native", "Supabase", "WebRTC", "Node.js"],
-    color: "from-violet-600 to-purple-700",
-    metric: "40+ hospitals",
-  },
-];
+type Project = {
+  id: string;
+  title: string;
+  category: string;
+  short_description: string;
+  tech_stack: string[];
+  thumbnail: string;
+  is_featured: boolean;
+  live_url?: string;
+  accent?: string;
+  gradient?: string;
+};
 
 export default function FeaturedProjects() {
-  return (
-    <section className="section-padding bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-14">
-            <SectionHeader
-              eyebrow="Our Work"
-              title="Products We're Proud Of"
-              description="A selection of real-world products we&apos;ve shipped."
-              align="left"
-            />
-            <Link
-              href="/portfolio"
-              className="flex-shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              View all projects <ArrowRight size={15} />
-            </Link>
-          </div>
-        </FadeIn>
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/projects");
+        const data = await res.json();
+        // Filter featured projects and add visual properties
+        const featured = data
+          .filter((p: any) => p.is_featured)
+          .slice(0, 3)
+          .map((p: any, i: number) => ({
+            ...p,
+            accent: i === 0 ? "#60a5fa" : i === 1 ? "#4ade80" : "#a78bfa",
+            gradient: i === 0 
+              ? "linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #1d4ed8 100%)" 
+              : i === 1 
+                ? "linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%)" 
+                : "linear-gradient(135deg, #3b0764 0%, #4c1d95 50%, #5b21b6 100%)"
+          }));
+        setProjects(featured);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const getExternalUrl = (url: string) => {
+    if (!url) return "#";
+    return url.startsWith('http') ? url : `https://${url}`;
+  };
+
+  if (loading) return (
+    <div className="section-padding flex justify-center items-center h-64">
+      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+
+  return (
+    <section className="section-padding" style={{ background: "#ffffff" }}>
+      <div className="container-xl">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14"
+        >
+          <div>
+            <div className="eyebrow-light mb-4">Our Work</div>
+            <h2 className="text-section-title font-display text-slate-900">
+              Products We&apos;re{" "}
+              <span className="gradient-text">Proud Of</span>
+            </h2>
+          </div>
+          <Link
+            href="/portfolio"
+            className="flex-shrink-0 inline-flex items-center gap-2 text-[13.5px] font-semibold text-blue-600 hover:text-blue-700 transition-colors group"
+          >
+            View all projects
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </motion.div>
+
+        {/* Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {projects.map((project, i) => (
-            <FadeIn key={project.title} delay={i * 0.12}>
-              <div className="group rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-slate-100 hover:border-slate-300 transition-all duration-300 h-full flex flex-col">
-                {/* Gradient header */}
-                <div className={`relative h-44 bg-gradient-to-br ${project.color} p-6 overflow-hidden`}>
-                  <div className="absolute inset-0 grid-pattern opacity-20" />
-                  <span className="relative z-10 inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold">
-                    {project.category}
-                  </span>
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                      <ExternalLink size={14} className="text-white" />
-                    </div>
-                  </div>
-                  {/* Metric badge */}
-                  <div className="absolute bottom-4 left-6">
-                    <span className="text-white/90 text-xs font-medium bg-white/10 px-2.5 py-1 rounded-full">
-                      {project.metric}
-                    </span>
-                  </div>
-                </div>
-                {/* Content */}
-                <div className="p-6 flex flex-col flex-1">
-                  <h3 className="font-bold text-slate-900 mb-3 leading-snug">{project.title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed flex-1">{project.description}</p>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-medium">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.65, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              onHoverStart={() => setHovered(i)}
+              onHoverEnd={() => setHovered(null)}
+              className="relative"
+            >
+                    <InteractiveTile
+                      image={project.thumbnail}
+                      title={project.title}
+                      subtitle={project.category}
+                      description={project.short_description}
+                      objectFit="object-cover"
+                      imageHeight="h-[400px]"
+                      topRight={
+                        project.live_url && (
+                          <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300">
+                             <ExternalLink size={16} />
+                          </div>
+                        )
+                      }
+                      footer={
+                        <div className="flex flex-wrap gap-2">
+                          {project.tech_stack?.map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold"
+                              style={{
+                                color: project.accent,
+                                background: `${project.accent}12`,
+                                border: `1px solid ${project.accent}20`,
+                              }}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      }
+                    />
+            </motion.div>
           ))}
         </div>
       </div>
