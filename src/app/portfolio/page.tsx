@@ -5,7 +5,7 @@ import { ExternalLink, ArrowRight, Loader2, Filter } from "lucide-react";
 import Link from "next/link";
 import FadeIn, { StaggerContainer, StaggerItem } from "@/components/animations/FadeIn";
 import CtaSection from "@/components/sections/CtaSection";
-import { cn } from "@/lib/utils";
+import { cn, API_BASE_URL } from "@/lib/utils";
 
 const categories = ["All", "Mobile App", "SaaS Platform", "Web Platform", "AI System", "Healthcare App"];
 
@@ -18,7 +18,7 @@ export default function PortfolioPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/projects");
+        const res = await fetch(`${API_BASE_URL}/api/projects`);
         if (res.ok) {
           const data = await res.json();
           setProjects(data);

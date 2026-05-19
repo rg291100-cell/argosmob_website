@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
 import axios from "axios";
+import { API_BASE_URL } from "@/lib/utils";
 
 interface ImageUploadProps {
   value: string;
@@ -27,7 +28,7 @@ export default function ImageUpload({ value, onChange, label }: ImageUploadProps
           const base64 = reader.result as string;
           const token = localStorage.getItem("admin_token");
           
-          const res = await axios.post("http://localhost:5000/api/media/upload", {
+          const res = await axios.post(`${API_BASE_URL}/api/media/upload`, {
             file: base64,
             fileName: file.name,
             fileType: file.type

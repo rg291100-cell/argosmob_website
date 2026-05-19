@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
 import InteractiveTile from "@/components/ui/InteractiveTile";
+import { API_BASE_URL } from "@/lib/utils";
 
 type Project = {
   id: string;
@@ -27,7 +28,7 @@ export default function FeaturedProjects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/projects");
+        const res = await fetch(`${API_BASE_URL}/api/projects`);
         const data = await res.json();
         // Filter featured projects and add visual properties
         const featured = data

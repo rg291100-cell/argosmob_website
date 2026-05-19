@@ -4,6 +4,7 @@ import Link from "next/link";
 import FadeIn, { StaggerContainer, StaggerItem } from "@/components/animations/FadeIn";
 import InteractiveTile from "@/components/ui/InteractiveTile";
 import CtaSection from "@/components/sections/CtaSection";
+import { API_BASE_URL } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Stories & Insights",
@@ -14,7 +15,7 @@ export default async function StoriesPage() {
   let stories: any[] = [];
 
   try {
-    const res = await fetch("http://localhost:5000/api/stories", { cache: 'no-store' });
+    const res = await fetch(`${API_BASE_URL}/api/stories`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       stories = data.filter((s: any) => s.status === 'published');

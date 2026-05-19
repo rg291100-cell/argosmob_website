@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import { API_BASE_URL } from "@/lib/utils";
 
 interface FormData {
   name: string;
@@ -78,7 +79,7 @@ export default function ContactForm() {
     setStatus("loading");
     
     try {
-      const res = await fetch("http://localhost:5000/api/enquiries", {
+      const res = await fetch(`${API_BASE_URL}/api/enquiries`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -4,6 +4,7 @@ import FadeIn, { StaggerContainer, StaggerItem } from "@/components/animations/F
 import SectionHeader from "@/components/ui/SectionHeader";
 import CtaSection from "@/components/sections/CtaSection";
 import InteractiveTile from "@/components/ui/InteractiveTile";
+import { API_BASE_URL } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Testimonials",
@@ -20,7 +21,7 @@ export default async function TestimonialsPage() {
   let displayTestimonials: any[] = [];
 
   try {
-    const res = await fetch("http://localhost:5000/api/testimonials", { cache: 'no-store' });
+    const res = await fetch(`${API_BASE_URL}/api/testimonials`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       displayTestimonials = data.map((t: any) => ({

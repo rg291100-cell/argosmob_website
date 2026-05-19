@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import FadeIn from "@/components/animations/FadeIn";
 import CtaSection from "@/components/sections/CtaSection";
+import { API_BASE_URL } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,7 +20,7 @@ function getYouTubeId(url: string) {
 
 async function getStory(slug: string) {
   try {
-    const res = await fetch("http://localhost:5000/api/stories", { cache: 'no-store' });
+    const res = await fetch(`${API_BASE_URL}/api/stories`, { cache: 'no-store' });
     if (!res.ok) return null;
     const stories = await res.json();
     return stories.find((s: any) => s.slug === slug && s.status === 'published') || null;

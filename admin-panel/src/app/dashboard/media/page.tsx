@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import { useState, useEffect, useRef } from "react";
 import { Upload, Image as ImageIcon, Search, Trash2, Copy, Grid, List as ListIcon, Loader2, FileVideo } from "lucide-react";
@@ -19,7 +20,7 @@ export default function MediaLibraryPage() {
 
   const fetchMedia = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/media");
+      const res = await axios.get(`${API_BASE_URL}/api/media`);
       setMedia(res.data);
     } catch (error) {
       console.error("Error fetching media:", error);
@@ -38,7 +39,7 @@ export default function MediaLibraryPage() {
       for (let i = 0; i < files.length; i++) {
         const formData = new FormData();
         formData.append("file", files[i]);
-        await axios.post("http://localhost:5000/api/media/upload", formData, {
+        await axios.post(`${API_BASE_URL}/api/media/upload`, formData, {
           headers: { 
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`
@@ -58,7 +59,7 @@ export default function MediaLibraryPage() {
     if (!confirm("Are you sure?")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      await axios.delete(`http://localhost:5000/api/media/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/media/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchMedia();

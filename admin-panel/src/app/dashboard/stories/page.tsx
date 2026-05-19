@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -58,7 +59,7 @@ export default function StoriesPage() {
 
   const fetchStories = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/stories");
+      const res = await axios.get(`${API_BASE_URL}/api/stories`);
       setStories(res.data);
     } catch (error) {
       console.error("Error fetching stories:", error);
@@ -71,11 +72,11 @@ export default function StoriesPage() {
     try {
       const token = localStorage.getItem("admin_token");
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/stories/${editingId}`, data, {
+        await axios.put(`${API_BASE_URL}/api/stories/${editingId}`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post("http://localhost:5000/api/stories", data, {
+        await axios.post(`${API_BASE_URL}/api/stories`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -93,7 +94,7 @@ export default function StoriesPage() {
     if (!confirm("Are you sure? This will permanently delete this story.")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      await axios.delete(`http://localhost:5000/api/stories/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/stories/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchStories();

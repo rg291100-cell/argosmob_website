@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -50,7 +51,7 @@ export default function TechStackPage() {
   const fetchTechItems = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/tech-stack");
+      const response = await fetch(`${API_BASE_URL}/api/tech-stack`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setTechItems(Array.isArray(data) ? data : []);
@@ -79,8 +80,8 @@ export default function TechStackPage() {
     try {
       const token = localStorage.getItem("admin_token");
       const url = editingId 
-        ? `http://localhost:5000/api/tech-stack/${editingId}`
-        : "http://localhost:5000/api/tech-stack";
+        ? `${API_BASE_URL}/api/tech-stack/${editingId}`
+        : `${API_BASE_URL}/api/tech-stack`;
       
       const response = await fetch(url, {
         method: editingId ? 'PUT' : 'POST',
@@ -110,7 +111,7 @@ export default function TechStackPage() {
     if (!confirm("Are you sure? This technology will be removed from your stack.")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      const response = await fetch(`http://localhost:5000/api/tech-stack/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tech-stack/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

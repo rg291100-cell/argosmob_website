@@ -4,6 +4,7 @@ import Link from "next/link";
 import FadeIn, { StaggerContainer, StaggerItem } from "@/components/animations/FadeIn";
 import SectionHeader from "@/components/ui/SectionHeader";
 import CtaSection from "@/components/sections/CtaSection";
+import { API_BASE_URL } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -134,7 +135,7 @@ export default async function ServicesPage() {
   let displayServices: any[] = [];
 
   try {
-    const res = await fetch("http://localhost:5000/api/services", { cache: 'no-store' });
+    const res = await fetch(`${API_BASE_URL}/api/services`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       displayServices = data.filter((s: any) => s.is_active).map((s: any, i: number) => ({

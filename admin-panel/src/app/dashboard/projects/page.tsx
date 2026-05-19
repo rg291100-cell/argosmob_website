@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -62,9 +63,9 @@ export default function ProjectsPage() {
     setLoading(true);
     try {
       const [projectsRes, techRes, servicesRes] = await Promise.all([
-        fetch("http://localhost:5000/api/projects"),
-        fetch("http://localhost:5000/api/tech-stack"),
-        fetch("http://localhost:5000/api/services")
+        fetch(`${API_BASE_URL}/api/projects`),
+        fetch(`${API_BASE_URL}/api/tech-stack`),
+        fetch(`${API_BASE_URL}/api/services`)
       ]);
 
       const projectsData = await projectsRes.json();
@@ -93,8 +94,8 @@ export default function ProjectsPage() {
 
       const method = editingId ? 'PATCH' : 'POST';
       const url = editingId 
-        ? `http://localhost:5000/api/projects/${editingId}`
-        : "http://localhost:5000/api/projects";
+        ? `${API_BASE_URL}/api/projects/${editingId}`
+        : `${API_BASE_URL}/api/projects`;
 
       const response = await fetch(url, {
         method,
@@ -124,7 +125,7 @@ export default function ProjectsPage() {
     if (!confirm("Are you sure? This will permanently delete this project.")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      const response = await fetch(`http://localhost:5000/api/projects/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

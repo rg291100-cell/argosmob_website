@@ -3,6 +3,7 @@ import FadeIn, { StaggerContainer, StaggerItem } from "@/components/animations/F
 import SectionHeader from "@/components/ui/SectionHeader";
 import CtaSection from "@/components/sections/CtaSection";
 import InteractiveTile from "@/components/ui/InteractiveTile";
+import { API_BASE_URL } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Tech Stack",
@@ -24,7 +25,7 @@ export default async function TechStackPage() {
   let displayCategories: any[] = [];
 
   try {
-    const res = await fetch("http://localhost:5000/api/tech-stack", { cache: 'no-store' });
+    const res = await fetch(`${API_BASE_URL}/api/tech-stack`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       const groups: Record<string, any[]> = {};

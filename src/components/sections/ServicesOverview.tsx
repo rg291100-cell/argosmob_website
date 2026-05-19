@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Smartphone, Globe, Brain, Zap, Database, Palette, Cloud, Package, Cpu, Code, Server, Layout, Shield, BarChart3, MessageSquare, ArrowUpRight } from "lucide-react";
+import { API_BASE_URL } from "@/lib/utils";
 
 const iconMap: Record<string, any> = {
   Smartphone, Globe, Brain, Zap, Database, Palette, Cloud, Package, Cpu, Code, Server, Layout, Shield, BarChart3, MessageSquare
@@ -28,7 +29,7 @@ export default function ServicesOverview() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/services");
+        const res = await fetch(`${API_BASE_URL}/api/services`);
         const data = await res.json();
         const colors = ["#2563eb", "#6366f1", "#8b5cf6", "#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#06b6d4"];
         const formatted = data

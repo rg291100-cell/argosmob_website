@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { API_BASE_URL } from "@/lib/utils";
 
 type TechItem = {
   id: string;
@@ -38,7 +39,7 @@ export default function TechPreview() {
   useEffect(() => {
     const fetchTech = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/tech-stack");
+        const res = await fetch(`${API_BASE_URL}/api/tech-stack`);
         const data = await res.json();
         
         // Group by category

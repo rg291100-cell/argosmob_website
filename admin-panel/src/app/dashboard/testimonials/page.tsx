@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -46,7 +47,7 @@ export default function TestimonialsPage() {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/testimonials");
+      const res = await axios.get(`${API_BASE_URL}/api/testimonials`);
       setTestimonials(res.data);
     } catch (error) {
       console.error("Error fetching testimonials:", error);
@@ -59,11 +60,11 @@ export default function TestimonialsPage() {
     try {
       const token = localStorage.getItem("admin_token");
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/testimonials/${editingId}`, data, {
+        await axios.put(`${API_BASE_URL}/api/testimonials/${editingId}`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post("http://localhost:5000/api/testimonials", data, {
+        await axios.post(`${API_BASE_URL}/api/testimonials`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -81,7 +82,7 @@ export default function TestimonialsPage() {
     if (!confirm("Are you sure? This will permanently delete this testimonial.")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      await axios.delete(`http://localhost:5000/api/testimonials/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/testimonials/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchTestimonials();

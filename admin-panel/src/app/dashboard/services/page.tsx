@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -65,7 +66,7 @@ export default function ServicesPage() {
 
   const fetchServices = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/services");
+      const res = await axios.get(`${API_BASE_URL}/api/services`);
       setServices(res.data);
     } catch (error) {
       console.error("Error fetching services:", error);
@@ -78,11 +79,11 @@ export default function ServicesPage() {
     try {
       const token = localStorage.getItem("admin_token");
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/services/${editingId}`, data, {
+        await axios.put(`${API_BASE_URL}/api/services/${editingId}`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post("http://localhost:5000/api/services", data, {
+        await axios.post(`${API_BASE_URL}/api/services`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -100,7 +101,7 @@ export default function ServicesPage() {
     if (!confirm("Are you sure? This will remove this service from your website.")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      await axios.delete(`http://localhost:5000/api/services/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/services/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchServices();

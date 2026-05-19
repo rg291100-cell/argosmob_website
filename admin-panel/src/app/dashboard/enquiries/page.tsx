@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,7 +49,7 @@ export default function EnquiriesPage() {
   const fetchEnquiries = async () => {
     try {
       const token = localStorage.getItem("admin_token");
-      const res = await axios.get("http://localhost:5000/api/enquiries", {
+      const res = await axios.get(`${API_BASE_URL}/api/enquiries`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEnquiries(Array.isArray(res.data) ? res.data : []);
@@ -63,7 +64,7 @@ export default function EnquiriesPage() {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("admin_token");
-      await axios.put(`http://localhost:5000/api/enquiries/${id}`, { status: newStatus }, {
+      await axios.put(`${API_BASE_URL}/api/enquiries/${id}`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchEnquiries();
@@ -79,7 +80,7 @@ export default function EnquiriesPage() {
     if (!confirm("Are you sure? This will permanently delete this enquiry lead.")) return;
     try {
       const token = localStorage.getItem("admin_token");
-      await axios.delete(`http://localhost:5000/api/enquiries/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/enquiries/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchEnquiries();

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Quote, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { API_BASE_URL } from "@/lib/utils";
 
 type Testimonial = {
   id: string;
@@ -26,7 +27,7 @@ export default function TestimonialsPreview() {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/testimonials");
+        const res = await fetch(`${API_BASE_URL}/api/testimonials`);
         const data = await res.json();
         const colors = ["#2563eb", "#6366f1", "#8b5cf6", "#ec4899", "#f59e0b"];
         const formatted = data.map((t: any, i: number) => ({

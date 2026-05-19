@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import axios from "axios";
 import { format } from "date-fns";
+import { API_BASE_URL } from "@/lib/utils";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({
@@ -33,10 +34,10 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
       try {
         const [projects, enquiries, stories, testimonials] = await Promise.all([
-          axios.get("http://localhost:5000/api/projects"),
-          axios.get("http://localhost:5000/api/enquiries"),
-          axios.get("http://localhost:5000/api/stories"),
-          axios.get("http://localhost:5000/api/testimonials")
+          axios.get(`${API_BASE_URL}/api/projects`),
+          axios.get(`${API_BASE_URL}/api/enquiries`),
+          axios.get(`${API_BASE_URL}/api/stories`),
+          axios.get(`${API_BASE_URL}/api/testimonials`)
         ]);
 
         setStats({
