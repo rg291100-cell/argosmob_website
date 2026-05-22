@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import { Send, CheckCircle, AlertCircle, Sparkles } from "lucide-react";
 import { API_BASE_URL } from "@/lib/utils";
 
 interface FormData {
@@ -25,7 +25,7 @@ const budgetOptions = [
   "₹5–10 Lakh",
   "₹10–25 Lakh",
   "₹25 Lakh+",
-  "Let&apos;s discuss",
+  "Let's discuss",
 ];
 
 const serviceOptions = [
@@ -53,6 +53,7 @@ export default function ContactForm() {
   const [form, setForm] = useState<FormData>(initial);
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [focusedField, setFocusedField] = useState<Record<string, boolean>>({});
 
   const validate = (): boolean => {
     const e: FormErrors = {};
@@ -71,6 +72,14 @@ export default function ContactForm() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => { const n = { ...prev }; delete n[name]; return n; });
+  };
+
+  const handleFocus = (name: string) => {
+    setFocusedField((prev) => ({ ...prev, [name]: true }));
+  };
+
+  const handleBlur = (name: string) => {
+    setFocusedField((prev) => ({ ...prev, [name]: false }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,18 +115,18 @@ export default function ContactForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center text-center py-20 px-8 rounded-2xl border border-green-200 bg-green-50 h-full min-h-96"
+        className="flex flex-col items-center justify-center text-center py-20 px-8 rounded-3xl border border-green-200 bg-green-50/50 backdrop-blur-md h-full min-h-[450px]"
       >
-        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6">
-          <CheckCircle size={36} className="text-green-600" />
+        <div className="w-20 h-20 rounded-2xl bg-green-100 flex items-center justify-center mb-6 shadow-md shadow-green-200/50">
+          <CheckCircle size={36} className="text-green-600 animate-pulse" />
         </div>
-        <h3 className="text-2xl font-bold text-slate-900 mb-3">Message Sent!</h3>
-        <p className="text-slate-600 max-w-sm leading-relaxed mb-6">
-          Thank you for reaching out. We&apos;ll review your project details and get back to you within 24 hours.
+        <h3 className="text-2xl font-bold text-slate-900 mb-3">Message Sent Successfully!</h3>
+        <p className="text-slate-600 max-w-sm leading-relaxed mb-8">
+          Thank you for reaching out. We've received your request and our technical partners will get back to you within 24 hours.
         </p>
         <button
           onClick={() => { setStatus("idle"); setForm(initial); }}
-          className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition-colors"
+          className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition-all duration-300 shadow-md shadow-green-600/20 active:scale-95 cursor-pointer"
         >
           Send Another Message
         </button>
@@ -126,20 +135,29 @@ export default function ContactForm() {
   }
 
   const inputBase =
-    "w-full px-4 py-3 rounded-xl border text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
-  const inputNormal = `${inputBase} border-slate-200 bg-white hover:border-slate-300`;
-  const inputError = `${inputBase} border-red-300 bg-red-50`;
+    "w-full px-4 py-3.5 rounded-xl border text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-slate-50/50 hover:bg-white";
+  const inputNormal = `${inputBase} border-slate-200/80`;
+  const inputError = `${inputBase} border-red-400 bg-red-50/30 focus:ring-red-500/10 focus:border-red-500`;
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="bg-white rounded-2xl border border-slate-200 p-7 shadow-sm">
-      <h2 className="text-xl font-bold text-slate-900 mb-1">Tell Us About Your Project</h2>
-      <p className="text-sm text-slate-500 mb-7">Free consultation · No obligation · Reply within 24h</p>
+    <form onSubmit={handleSubmit} noValidate className="bg-white/80 backdrop-blur-md rounded-[32px] border border-slate-200/80 p-8 shadow-xl shadow-slate-900/5 relative overflow-hidden">
+      {/* Background accents */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl pointer-events-none" />
+      
+      <div className="flex items-center gap-2 mb-2">
+        <div className="eyebrow-light">
+          <Sparkles size={10} className="text-blue-600" />
+          Interactive Brief
+        </div>
+      </div>
+      <h2 className="text-2xl font-bold text-slate-900 mb-1 tracking-tight">Tell Us About Your Project</h2>
+      <p className="text-sm text-slate-500 mb-8">Free consultation · NDA on request · Reply within 24h</p>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {/* Name + Email */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+        <div className="grid sm:grid-cols-2 gap-5">
+          <div className="relative">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
               Full Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -147,17 +165,19 @@ export default function ContactForm() {
               name="name"
               value={form.name}
               onChange={handleChange}
+              onFocus={() => handleFocus("name")}
+              onBlur={() => handleBlur("name")}
               placeholder="Rahul Sharma"
               className={errors.name ? inputError : inputNormal}
             />
             {errors.name && (
-              <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
-                <AlertCircle size={11} /> {errors.name}
+              <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5">
+                <AlertCircle size={12} /> {errors.name}
               </p>
             )}
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <div className="relative">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
               Email Address <span className="text-red-500">*</span>
             </label>
             <input
@@ -165,21 +185,23 @@ export default function ContactForm() {
               name="email"
               value={form.email}
               onChange={handleChange}
+              onFocus={() => handleFocus("email")}
+              onBlur={() => handleBlur("email")}
               placeholder="rahul@company.com"
               className={errors.email ? inputError : inputNormal}
             />
             {errors.email && (
-              <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
-                <AlertCircle size={11} /> {errors.email}
+              <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5">
+                <AlertCircle size={12} /> {errors.email}
               </p>
             )}
           </div>
         </div>
 
         {/* Company + Phone */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+        <div className="grid sm:grid-cols-2 gap-5">
+          <div className="relative">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
               Company / Startup
             </label>
             <input
@@ -187,12 +209,14 @@ export default function ContactForm() {
               name="company"
               value={form.company}
               onChange={handleChange}
+              onFocus={() => handleFocus("company")}
+              onBlur={() => handleBlur("company")}
               placeholder="Your company name"
               className={inputNormal}
             />
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <div className="relative">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
               Phone Number
             </label>
             <input
@@ -200,6 +224,8 @@ export default function ContactForm() {
               name="phone"
               value={form.phone}
               onChange={handleChange}
+              onFocus={() => handleFocus("phone")}
+              onBlur={() => handleBlur("phone")}
               placeholder="+91 98765 43210"
               className={inputNormal}
             />
@@ -207,15 +233,17 @@ export default function ContactForm() {
         </div>
 
         {/* Service + Budget */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+        <div className="grid sm:grid-cols-2 gap-5">
+          <div className="relative">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
               Service Needed <span className="text-red-500">*</span>
             </label>
             <select
               name="service"
               value={form.service}
               onChange={handleChange}
+              onFocus={() => handleFocus("service")}
+              onBlur={() => handleBlur("service")}
               className={errors.service ? inputError : inputNormal}
             >
               <option value="">Select a service...</option>
@@ -224,19 +252,21 @@ export default function ContactForm() {
               ))}
             </select>
             {errors.service && (
-              <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
-                <AlertCircle size={11} /> {errors.service}
+              <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5">
+                <AlertCircle size={12} /> {errors.service}
               </p>
             )}
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <div className="relative">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
               Project Budget
             </label>
             <select
               name="budget"
               value={form.budget}
               onChange={handleChange}
+              onFocus={() => handleFocus("budget")}
+              onBlur={() => handleBlur("budget")}
               className={inputNormal}
             >
               <option value="">Select a range...</option>
@@ -248,50 +278,64 @@ export default function ContactForm() {
         </div>
 
         {/* Description */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+        <div className="relative">
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
             Project Description <span className="text-red-500">*</span>
           </label>
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
+            onFocus={() => handleFocus("description")}
+            onBlur={() => handleBlur("description")}
             rows={5}
             placeholder="Tell us about your project — what you're building, who it's for, and what challenges you're facing..."
             className={`resize-none ${errors.description ? inputError : inputNormal}`}
           />
           {errors.description && (
-            <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
-              <AlertCircle size={11} /> {errors.description}
+            <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5">
+              <AlertCircle size={12} /> {errors.description}
             </p>
           )}
-          <p className="mt-1.5 text-xs text-slate-400">{form.description.length} characters</p>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-[11px] text-slate-400">At least 20 characters</p>
+            <p className="text-[11px] text-slate-400 font-semibold">{form.description.length} chars</p>
+          </div>
         </div>
 
         {/* Submit */}
         <button
           type="submit"
           disabled={status === "loading"}
-          className="w-full flex items-center justify-center gap-2.5 px-6 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-xl transition-all duration-200 active:scale-99 shadow-sm hover:shadow-md hover:shadow-blue-100"
+          className="w-full flex items-center justify-center gap-2.5 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 disabled:from-blue-400 disabled:to-indigo-400 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 active:scale-[0.98] shadow-md shadow-blue-500/10 cursor-pointer relative overflow-hidden group"
         >
+          {/* Light sweep sweep effect */}
+          <span className="absolute inset-0 w-full h-full block bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:animate-beam-sweep pointer-events-none" />
+
           {status === "loading" ? (
             <>
-              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+              <svg className="animate-spin w-4 h-4 text-white" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              Sending...
+              <span>Transmitting...</span>
             </>
           ) : (
             <>
-              <Send size={16} />
-              Send Message
+              <Send size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <span>Send Message</span>
             </>
           )}
         </button>
 
-        <p className="text-center text-xs text-slate-400">
-          Your information is confidential and will never be shared.
+        {status === "error" && (
+          <p className="text-center text-xs text-red-500 font-semibold flex items-center justify-center gap-1.5 mt-2">
+            <AlertCircle size={13} /> Something went wrong. Please check your connection and try again.
+          </p>
+        )}
+
+        <p className="text-center text-[11px] text-slate-400 mt-2">
+          Your information is fully encrypted and protected by corporate NDA standards.
         </p>
       </div>
     </form>

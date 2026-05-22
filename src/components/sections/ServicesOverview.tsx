@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Smartphone, Globe, Brain, Zap, Database, Palette, Cloud, Package, Cpu, Code, Server, Layout, Shield, BarChart3, MessageSquare, ArrowUpRight } from "lucide-react";
 import { API_BASE_URL } from "@/lib/utils";
+import Button from "@/components/ui/Button";
 
 const iconMap: Record<string, any> = {
   Smartphone, Globe, Brain, Zap, Database, Palette, Cloud, Package, Cpu, Code, Server, Layout, Shield, BarChart3, MessageSquare
@@ -207,12 +208,9 @@ export default function ServicesOverview() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-12 text-center"
         >
-          <Link
-            href="/services"
-            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl border-2 border-blue-600 text-blue-600 font-semibold text-[14px] hover:bg-blue-600 hover:text-white transition-all duration-250 hover:shadow-lg hover:shadow-blue-600/20 active:scale-[0.98]"
-          >
-            Explore All Services <ArrowUpRight size={15} />
-          </Link>
+          <Button href="/services" variant="outline" size="lg" arrow>
+            Explore All Services
+          </Button>
         </motion.div>
       </div>
     </section>

@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* =====================================================
+   PREMIUM DESIGN SYSTEM — ArgosMob Tech & AI
+   Award-winning CSS foundation
+   ===================================================== */
+
+:root {
+  --font-inter: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-syne: "Syne", system-ui, sans-serif;
+}
+
 /* ============================================
    DESIGN TOKENS
    ============================================ */

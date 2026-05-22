@@ -7,7 +7,13 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-
 import { X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
+interface NavLink {
+  href: string;
+  label: string;
+  children?: { href: string; label: string }[];
+}
+
+const navLinks: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
@@ -74,16 +80,16 @@ export default function Navbar() {
         }}
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          "fixed left-0 right-0 z-50 transition-all duration-500",
           isScrolledOrNotHome
-            ? "bg-white/95 backdrop-blur-2xl border-b border-slate-200/60 shadow-sm shadow-slate-900/5"
-            : "bg-transparent"
+            ? "top-4 max-w-5xl mx-4 lg:mx-auto rounded-2xl lg:rounded-full bg-white/75 backdrop-blur-xl border border-slate-200/40 shadow-lg shadow-slate-950/5 px-2"
+            : "top-0 bg-transparent"
         )}
       >
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[68px] flex items-center justify-between">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] lg:h-[64px] flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-            <div className="relative w-10 h-10">
+            <div className="relative w-9 h-9">
               <img 
                 src="/images/logo.png" 
                 alt="ArgosMob Logo" 
@@ -94,7 +100,7 @@ export default function Navbar() {
             <div className="flex flex-col leading-none gap-0.5">
               <span
                 className={cn(
-                  "font-bold text-[15px] tracking-tight transition-colors duration-300",
+                  "font-bold text-[14px] tracking-tight transition-colors duration-300",
                   isScrolledOrNotHome ? "text-slate-900" : "text-white"
                 )}
               >
@@ -102,7 +108,7 @@ export default function Navbar() {
               </span>
               <span
                 className={cn(
-                  "text-[9px] font-bold tracking-[0.18em] uppercase transition-colors duration-300",
+                  "text-[8px] font-bold tracking-[0.18em] uppercase transition-colors duration-300",
                   isScrolledOrNotHome ? "text-blue-600" : "text-blue-300"
                 )}
               >
@@ -123,17 +129,12 @@ export default function Navbar() {
                 <Link
                   href={link.href}
                   className={cn(
-                    "relative flex items-center gap-1 px-4 py-2.5 text-[13.5px] font-medium rounded-lg transition-all duration-200 group/link",
+                    "relative flex items-center gap-1 px-4 py-2 text-[13px] font-semibold rounded-full transition-all duration-300 group/link",
                     isActive(link.href)
-                      ? isScrolledOrNotHome ? "text-blue-600" : "text-white"
+                      ? isScrolledOrNotHome ? "text-blue-600 bg-blue-50/50" : "text-white bg-white/10"
                       : isScrolledOrNotHome
-                      ? "text-slate-600 hover:text-slate-900"
-                      : "text-white/75 hover:text-white",
-                    !isActive(link.href) && (
-                      isScrolledOrNotHome
-                        ? "hover:bg-slate-100/80"
-                        : "hover:bg-white/8"
-                    )
+                      ? "text-slate-600 hover:text-slate-950 hover:bg-slate-50"
+                      : "text-white/80 hover:text-white hover:bg-white/5"
                   )}
                 >
                   {link.label}
@@ -151,8 +152,7 @@ export default function Navbar() {
                     <motion.span
                       layoutId="nav-active"
                       className={cn(
-                        "absolute bottom-1.5 left-1/2 -translate-x-1/2 h-0.5 w-3 rounded-full",
-                        isScrolledOrNotHome ? "bg-blue-600" : "bg-white"
+                        "absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[3px] w-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600"
                       )}
                     />
                   )}
@@ -200,17 +200,17 @@ export default function Navbar() {
               href="/contact"
               className={cn(
                 "text-[13px] font-semibold transition-colors duration-200",
-                isScrolledOrNotHome ? "text-slate-600 hover:text-slate-900" : "text-white/75 hover:text-white"
+                isScrolledOrNotHome ? "text-slate-600 hover:text-slate-950" : "text-white/75 hover:text-white"
               )}
             >
               Contact
             </Link>
             <Link
               href="/contact"
-              className="btn-primary !py-2.5 !px-5 !text-[13px] !rounded-[10px]"
+              className="btn-primary !py-2 !px-4 !text-[12.5px] !rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 border-none shadow-[0_4px_15px_rgba(37,99,235,0.15)] hover:shadow-[0_4px_25px_rgba(37,99,235,0.35)]"
             >
               Start a Project
-              <ArrowUpRight size={14} />
+              <ArrowUpRight size={13} />
             </Link>
           </div>
 
